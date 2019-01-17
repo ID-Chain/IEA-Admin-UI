@@ -1,0 +1,1377 @@
+---
+swagger: "2.0"
+info:
+  description: "IdentityChain Agent REST API"
+  version: "0.1.6"
+  title: "IdentityChain API"
+schemes:
+- "http"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+security:
+- Bearer: []
+paths:
+  /api/login:
+    post:
+      tags:
+      - "user"
+      summary: "Allow users to login, will return them a JWT valid for a specific\
+        \ amount of time"
+      description: "Allow users to login, will return them a JWT valid for a specific\
+        \ amount of time"
+      operationId: "apiLoginPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/login_post"
+      responses:
+        200:
+          description: ""
+      security: []
+      x-swagger-router-controller: "User"
+  /api/user:
+    post:
+      tags:
+      - "user"
+      summary: "Register a new user"
+      description: "Register a new user"
+      operationId: "apiUserPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/user_post"
+      responses:
+        201:
+          description: "User successfully created"
+          schema:
+            $ref: "#/definitions/inline_response_201"
+          headers:
+            Location:
+              type: "string"
+              description: "Path to created user, e.g. /user/userId"
+      x-swagger-router-controller: "User"
+  /api/user/{user}:
+    get:
+      tags:
+      - "user"
+      summary: "Retrieve a user"
+      description: "Retrieve a user"
+      operationId: "apiUserUserGET"
+      parameters:
+      - name: "user"
+        in: "path"
+        description: "A unique id value (or \"me\") identifying this user."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "User"
+    put:
+      tags:
+      - "user"
+      summary: "Update a User (at least one of the properties must be provided)"
+      description: "Update a User (at least one of the properties must be provided)"
+      operationId: "apiUserUserPUT"
+      parameters:
+      - name: "user"
+        in: "path"
+        description: "A unique id value (or \"me\") identifying this user."
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/user_put"
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "User"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete a User"
+      description: "Delete a User"
+      operationId: "apiUserUserDELETE"
+      parameters:
+      - name: "user"
+        in: "path"
+        description: "A unique id value (or \"me\") identifying this user."
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: ""
+      x-swagger-router-controller: "User"
+  /api/wallet:
+    get:
+      tags:
+      - "wallet"
+      summary: "List all wallets of user"
+      description: "List all wallets of user"
+      operationId: "apiWalletGET"
+      parameters: []
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Wallet"
+    post:
+      tags:
+      - "wallet"
+      summary: "Create a new Wallet (optionally with given name and settings)"
+      description: "Create a new Wallet (optionally with given name and settings)"
+      operationId: "apiWalletPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/wallet_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Wallet"
+  /api/wallet/{wallet}:
+    get:
+      tags:
+      - "wallet"
+      summary: "Retrieve a Wallet"
+      description: "Retrieve a Wallet"
+      operationId: "apiWalletWalletGET"
+      parameters:
+      - name: "wallet"
+        in: "path"
+        description: "A unique id value (or \"default\") identifying this wallet."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Wallet"
+    delete:
+      tags:
+      - "wallet"
+      summary: "Delete a Wallet"
+      description: "Delete a Wallet"
+      operationId: "apiWalletWalletDELETE"
+      parameters:
+      - name: "wallet"
+        in: "path"
+        description: "A unique id value (or \"default\") identifying this wallet."
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: ""
+      x-swagger-router-controller: "Wallet"
+  /api/connection/{myDid}:
+    get:
+      tags:
+      - "connection"
+      summary: "Retrieve a (pending) connection"
+      description: "Retrieve a (pending) connection"
+      operationId: "apiConnectionMyDidGET"
+      parameters:
+      - name: "myDid"
+        in: "path"
+        description: "A unique did used in a pairwise"
+        required: true
+        type: "string"
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+          schema:
+            $ref: "#/definitions/inline_response_200"
+        404:
+          description: "no matching connection found"
+      x-swagger-router-controller: "Connection"
+  /api/connectionoffer:
+    get:
+      tags:
+      - "connection"
+      summary: "List all my connection offers"
+      description: "List all my connection offers"
+      operationId: "apiConnectionofferGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Connection"
+    post:
+      tags:
+      - "connection"
+      summary: "Create a new connection offer"
+      description: "Create a new connection offer"
+      operationId: "apiConnectionofferPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/connectionoffer_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Connection"
+  /api/connectionoffer/{connectionOfferId}:
+    get:
+      tags:
+      - "connection"
+      summary: "Retrieve a connection offer by _id"
+      description: "Retrieve a connection offer by _id"
+      operationId: "apiConnectionofferConnectionOfferIdGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "connectionOfferId"
+        in: "path"
+        description: "connection offer _id"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Connection"
+    delete:
+      tags:
+      - "connection"
+      summary: "Delete a connection offer by _id"
+      description: "Delete a connection offer by _id"
+      operationId: "apiConnectionofferConnectionOfferIdDELETE"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "connectionOfferId"
+        in: "path"
+        description: "connection offer _id"
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: ""
+      x-swagger-router-controller: "Connection"
+  /api/connectionrequest:
+    get:
+      tags:
+      - "connection"
+      summary: "List all my connection requests"
+      description: "List all my connection requests"
+      operationId: "apiConnectionrequestGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Connection"
+    post:
+      tags:
+      - "connection"
+      summary: "Accept a connection offer and/or send a connection request"
+      description: "Accept a connection offer and/or send a connection request"
+      operationId: "apiConnectionrequestPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/connectionrequest_post"
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "Connection"
+  /api/connectionrequest/{connectionRequestId}:
+    get:
+      tags:
+      - "connection"
+      summary: "Retrieve a connection request by _id"
+      description: "Retrieve a connection request by _id"
+      operationId: "apiConnectionrequestConnectionRequestIdGET"
+      parameters:
+      - name: "connectionRequestId"
+        in: "path"
+        description: "connection request _id"
+        required: true
+        type: "string"
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Connection"
+    delete:
+      tags:
+      - "connection"
+      summary: "Delete a connection request by _id"
+      description: "Delete a connection request by _id"
+      operationId: "apiConnectionrequestConnectionRequestIdDELETE"
+      parameters:
+      - name: "connectionRequestId"
+        in: "path"
+        description: "connection request _id"
+        required: true
+        type: "string"
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        204:
+          description: ""
+      x-swagger-router-controller: "Connection"
+  /api/connectionresponse:
+    post:
+      tags:
+      - "connection"
+      summary: "Accept a connection request and send a connection response"
+      description: "Accept a connection request and send a connection response"
+      operationId: "apiConnectionresponsePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/connectionresponse_post"
+      responses:
+        200:
+          description: "Success"
+      x-swagger-router-controller: "Connection"
+  /api/schema:
+    get:
+      tags:
+      - "schema"
+      summary: "List schemas"
+      description: "List schemas from the logged in user"
+      operationId: "apiSchemaGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "onlyActive"
+        in: "query"
+        description: "(Optional) Flag to filter all non-active schemas"
+        required: false
+        type: "boolean"
+      responses:
+        200:
+          description: ""
+          schema:
+            type: "array"
+            example:
+            - name: "Passport"
+              version: "1.0"
+              created: 0
+              schemaId: "Th7MpTaRZVRYnPiabds81Y:2:Passport:1.0"
+            - name: "ID_NL"
+              version: "2.0"
+              created: 10000
+              schemaId: "Th7MpTaRZVRYnPiabds81Y:2:ID_NL:2.0"
+            - name: "Passport"
+              version: "2.0"
+              created: 20000
+              schemaId: "Th7MpTaRZVRYnPiabds81Y:2:Passport:2.0"
+            items:
+              $ref: "#/definitions/inline_response_200_1"
+      x-swagger-router-controller: "Schema"
+    post:
+      tags:
+      - "schema"
+      summary: "Create a Schema"
+      description: "Create a Schema, Credential Definition & Revocation Registry (if\
+        \ revocable) for the logged in user"
+      operationId: "apiSchemaPOST"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/schema_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Schema"
+  /api/schema/{schemaid}:
+    get:
+      tags:
+      - "schema"
+      summary: "Retrieve a schema"
+      description: "Retrieve a schema"
+      operationId: "apiSchemaSchemaidGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "schemaid"
+        in: "path"
+        description: "A unique string value identifying this schema."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Schema Details"
+          schema:
+            $ref: "#/definitions/schema_details"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "Schema"
+    patch:
+      tags:
+      - "schema"
+      summary: "Alter schema by the given operation"
+      description: ""
+      operationId: "apiSchemaSchemaidPATCH"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "schemaid"
+        in: "path"
+        description: "A unique string value identifying this schema."
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/body"
+      responses:
+        204:
+          description: "Successfully altered schema"
+        405:
+          description: "Schema does not support revocations"
+        500:
+          description: "Internal Server Error"
+      x-swagger-router-controller: "Schema"
+  /api/credentialdef:
+    get:
+      tags:
+      - "credential"
+      summary: "List credential definitions of wallet"
+      description: "List credential definitions of wallet"
+      operationId: "apiCredentialdefGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Credential"
+    post:
+      tags:
+      - "credential"
+      summary: "Create a credential definition"
+      description: "Create a credential definition"
+      operationId: "apiCredentialdefPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/credentialdef_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/credentialdef/{creddef}:
+    get:
+      tags:
+      - "credential"
+      summary: "Retrieve a credential definition from the ledger"
+      description: "Retrieve a credential definition from the ledger"
+      operationId: "apiCredentialdefCreddefGET"
+      parameters:
+      - name: "creddef"
+        in: "path"
+        description: "A unique string value identifying this credential definition."
+        required: true
+        type: "string"
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Credential"
+    delete:
+      tags:
+      - "credential"
+      summary: "Delete a credential definition"
+      description: "Delete a credential definition"
+      operationId: "apiCredentialdefCreddefDELETE"
+      parameters:
+      - name: "creddef"
+        in: "path"
+        description: "A unique string value identifying this credential definition."
+        required: true
+        type: "string"
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        204:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/credentialoffer:
+    post:
+      tags:
+      - "credential"
+      summary: "Create a credential offer"
+      description: "Create a credential offer"
+      operationId: "apiCredentialofferPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/credentialoffer_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/credentialrequest:
+    post:
+      tags:
+      - "credential"
+      summary: "Accept credential offer and create credential request"
+      description: "Accept credential offer and create credential request"
+      operationId: "apiCredentialrequestPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/credentialrequest_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/credentialissue:
+    post:
+      tags:
+      - "credential"
+      summary: "Issue a credential"
+      description: "Issue a credential"
+      operationId: "apiCredentialissuePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/credentialissue_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/credential/:
+    get:
+      tags:
+      - "credential"
+      summary: "List all credentials of specific wallet (UNTESTED ENDPOINT)"
+      description: "List all credentials of specific wallet (UNTESTED ENDPOINT)"
+      operationId: "apiCredentialGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "schema"
+        in: "query"
+        description: "(Optional) schemaId to filter credentials"
+        required: false
+        type: "string"
+      - name: "schemaIssuerDid"
+        in: "query"
+        description: "(Optional) schemaIssuerDid to filter credentials"
+        required: false
+        type: "string"
+      - name: "schemaName"
+        in: "query"
+        description: "(Optional) schemaName to filter credentials"
+        required: false
+        type: "string"
+      - name: "schemaVersion"
+        in: "query"
+        description: "(Optional) schemaVersion to filter credentials"
+        required: false
+        type: "string"
+      - name: "issuerDid"
+        in: "query"
+        description: "(Optional) issuerDid to filter credentials"
+        required: false
+        type: "string"
+      - name: "credDefId"
+        in: "query"
+        description: "(Optional) credDefId to filter credentials"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Credential"
+    post:
+      tags:
+      - "credential"
+      summary: "Store a credential"
+      description: "Store a credential"
+      operationId: "apiCredentialPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/credential_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/credential/{id}:
+    get:
+      tags:
+      - "credential"
+      summary: "Retrieve a credential"
+      description: "Retrieve a credential"
+      operationId: "apiCredentialIdGET"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "A unique string value identifying this credential."
+        required: true
+        type: "string"
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Credential"
+  /api/proofrequest:
+    post:
+      tags:
+      - "proof"
+      summary: "Create a proof request"
+      description: "Create a proof request"
+      operationId: "apiProofrequestPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/proofrequest_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Proof"
+  /api/proof:
+    post:
+      tags:
+      - "proof"
+      summary: "Create a Proof"
+      description: "Create a Proof"
+      operationId: "apiProofPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/proof_post"
+      responses:
+        201:
+          description: ""
+      x-swagger-router-controller: "Proof"
+  /api/proofverification:
+    post:
+      tags:
+      - "proof"
+      summary: "Create a proof verification"
+      description: "Create a proof verification"
+      operationId: "apiProofverificationPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/proofverification_post"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Proof"
+  /api/transactions:
+    get:
+      tags:
+      - "transaction"
+      description: "Get ledger transactions from-to indexes"
+      operationId: "apiTransactionsGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "from"
+        in: "query"
+        description: "Sequence Number of first transaction to query (greater than\
+          \ 0)"
+        required: true
+        type: "number"
+      - name: "to"
+        in: "query"
+        description: "Sequence Number of last transaction to query (greater than from\
+          \ index)"
+        required: true
+        type: "number"
+      - name: "type"
+        in: "query"
+        description: "Ledger Type: pool, domain, config. By default is DOMAIN"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "Returns list of transactions"
+      x-swagger-router-controller: "Transaction"
+  /api/nym:
+    post:
+      tags:
+      - "transaction"
+      summary: "Send Nym request to the ledger"
+      description: "Send Nym request to the ledger"
+      operationId: "apiNymPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/nym_post"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Transaction"
+  /api/nym/{did}:
+    get:
+      tags:
+      - "transaction"
+      summary: "Retrieve Nym from ledger"
+      description: "Retrieve Nym from ledger"
+      operationId: "apiNymDidGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "did"
+        in: "path"
+        description: "Did of NYM record to retrieve"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Transaction"
+  /indy/:
+    post:
+      tags:
+      - "message"
+      summary: "Agent Message Endpoint"
+      description: "Agent Message Endpoint"
+      operationId: "indyPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/indy_post"
+      responses:
+        202:
+          description: ""
+      security: []
+      x-swagger-router-controller: "Message"
+  /api/message/:
+    get:
+      tags:
+      - "message"
+      summary: "List messages"
+      description: "List messages"
+      operationId: "apiMessageGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "type"
+        in: "query"
+        description: "(Optional) A single message type to filter by"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Message"
+    post:
+      tags:
+      - "message"
+      summary: "Send message"
+      description: "Send message"
+      operationId: "apiMessagePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: false
+        schema:
+          $ref: "#/definitions/message_post"
+      responses:
+        200:
+          description: ""
+        202:
+          description: ""
+      x-swagger-router-controller: "Message"
+  /api/message/{messageId}:
+    get:
+      tags:
+      - "message"
+      summary: "Retrieve a message"
+      description: "Retrieve a message"
+      operationId: "apiMessageMessageIdGET"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "messageId"
+        in: "path"
+        description: "A unique string value identifying a message."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: ""
+      x-swagger-router-controller: "Message"
+    delete:
+      tags:
+      - "message"
+      summary: "Delete a message"
+      description: "Delete a message"
+      operationId: "apiMessageMessageIdDELETE"
+      parameters:
+      - name: "wallet"
+        in: "header"
+        description: "(Optional) A unique id value (or \"default\") identifying a\
+          \ wallet"
+        required: false
+        type: "string"
+      - name: "messageId"
+        in: "path"
+        description: "A unique string value identifying a message."
+        required: true
+        type: "string"
+      responses:
+        204:
+          description: ""
+      x-swagger-router-controller: "Message"
+securityDefinitions:
+  Bearer:
+    description: "JWT Authorization header using the Bearer scheme.\nExample: 'Authorization:\
+      \ Bearer {token}'\n\nPlease add Bearer in front of the JWT token:\n> Bearer\
+      \ xxxxx.yyyyy.zzzzz\n"
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+definitions:
+  wallet:
+    type: "string"
+    description: "(Optional) A unique id value identifying a wallet"
+  user_post:
+    type: "object"
+    required:
+    - "password"
+    - "username"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+      wallet:
+        $ref: "#/definitions/wallet_post"
+  user_put:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+        description: "(Optional) New username"
+      password:
+        type: "string"
+        description: "(Optional) New password"
+      wallet:
+        $ref: "#/definitions/wallet"
+  wallet_post:
+    type: "object"
+    required:
+    - "credentials"
+    properties:
+      name:
+        type: "string"
+        description: "(Optional) Wallet name, must be globally unique. Automatically\
+          \ generated if none is provided."
+      credentials:
+        $ref: "#/definitions/wallet_post_credentials"
+      seed:
+        type: "string"
+        description: "(Optional) Seed to use for initial did creation."
+  credential_post:
+    type: "object"
+    required:
+    - "encryptedCredential"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      encryptedCredential:
+        type: "string"
+        description: "The authcrypted credential offer id"
+  credentialissue_post:
+    type: "object"
+    required:
+    - "encryptedCredentialRequest"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      encryptedCredentialRequest:
+        type: "string"
+        description: "The authcrypted Credential Request"
+      values:
+        type: "object"
+        description: "Object containing attributes defined in schema as key-value\
+          \ pairs (e.g. {\"attrName\":\"attrValue\", \"attrName1\":\"attrValue1\"\
+          })"
+        properties: {}
+  credentialdef_post:
+    type: "object"
+    required:
+    - "schemaId"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      schemaId:
+        type: "string"
+        description: "A unique string value identifying a schema"
+      supportRevocation:
+        type: "boolean"
+        description: "(Optional) States if revocation should be supported for this\
+          \ credential definiton"
+  credentialoffer_post:
+    type: "object"
+    required:
+    - "credDefId"
+    - "recipientDid"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      recipientDid:
+        type: "string"
+        description: "DID for whom to create a credential offer"
+      credDefId:
+        type: "string"
+        description: "Credential definition id"
+  credentialrequest_post:
+    type: "object"
+    required:
+    - "encryptedCredentialOffer"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      encryptedCredentialOffer:
+        type: "string"
+        description: "auth crypted credential offer"
+  connectionoffer_post:
+    type: "object"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      endpoint:
+        type: "string"
+        description: "(Optional) Response endpoint for connection response - my endpoint"
+      role:
+        type: "string"
+        description: "(Optional) Role offered to the connection invitee"
+        enum:
+        - "NONE"
+        - "TRUSTEE"
+        - "STEWARD"
+        - "TRUST_ANCHOR"
+      meta:
+        type: "object"
+        description: "(Optional) Additional data to store in the offer (and later\
+          \ in the pairwise), e.g. citizen id but not send with the offer"
+        properties: {}
+      data:
+        type: "object"
+        description: "(Optional) Additional data like name, logo, description, to\
+          \ send with the connection offer"
+        properties: {}
+  connectionrequest_post:
+    type: "object"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      endpoint:
+        type: "string"
+        description: "(Optional) Response endpoint for connection response - my endpoint"
+      theirDid:
+        type: "string"
+        description: "(Optional) Their (endpoint) did, required if there is no connection\
+          \ offer"
+      theirVk:
+        type: "string"
+        description: "(Optional) Their (endpoint) did verification key, required if\
+          \ there is no connection offer or verkey not on ledger."
+      theirEndpoint:
+        type: "string"
+        description: "(Optional) Their endpoint address, required if no there is no\
+          \ connection offer or address not on ledger."
+      connectionOffer:
+        type: "object"
+        example:
+          id: "09348295728957894752397589247589247589"
+          type: "urn:sovrin:agent:message_type:sovrin.org/connection_offer"
+          message:
+            did: "endpointDid"
+            verkey: "endpointVk"
+            endpoint: "endpointAddress"
+            nonce: "09348295728957894752397589247589247589"
+        description: "(Optional) A connection offer object"
+        properties: {}
+  connectionresponse_post:
+    type: "object"
+    required:
+    - "connectionRequestId"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      connectionRequestId:
+        type: "string"
+        example: "5b7ddce00000000000000000"
+        description: "A unique string value identifying the connection request to\
+          \ respond to"
+  proofrequest_post:
+    type: "object"
+    required:
+    - "proofRequest"
+    - "recipientDid"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      recipientDid:
+        type: "string"
+        description: "DID for whom to create a proof request"
+      proofRequest:
+        type: "object"
+        example:
+          name: "Ticket"
+          version: "0.1"
+          requested_attributes:
+            attr1_referent:
+              name: "firstname"
+              restrictions:
+              - cred_def_id: "XsjEewC463EYaXeQZcsWND:3:CL:19"
+            attr2_referent:
+              name: "lastname"
+              restrictions:
+              - cred_def_id: "XsjEewC463EYaXeQZcsWND:3:CL:19"
+            attr3_referent:
+              name: "phone"
+          requested_predicates: {}
+        description: "proof request object (see https://github.com/hyperledger/indy-sdk/blob/master/doc/getting-started/getting-started.md#apply-for-a-job)"
+        properties: {}
+  proof_post:
+    type: "object"
+    required:
+    - "encryptedProofRequest"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      encryptedProofRequest:
+        type: "string"
+        description: "Encrypted Proof Request"
+      selfAttestedAttributes:
+        type: "object"
+        example:
+          phone: "00001111"
+        description: "(Optional) Object containing self-attested-attributes as key-value\
+          \ pairs"
+        properties: {}
+  proofverification_post:
+    type: "object"
+    required:
+    - "encryptedProof"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      encryptedProof:
+        type: "string"
+        description: "Encrypted Proof"
+  schema_post:
+    type: "object"
+    required:
+    - "attributes"
+    - "name"
+    - "version"
+    properties:
+      name:
+        type: "string"
+        description: "A unique name for the schema"
+      version:
+        type: "string"
+        description: "Schema version"
+      parentSchemaId:
+        type: "string"
+        description: "Schema Id of the parent"
+      isRevocable:
+        type: "boolean"
+        description: "Flag to define if credentials issued with this schema could\
+          \ be revoked\nIf true it will generate one or multiple Revocation Registries\n"
+        default: false
+      attributes:
+        type: "array"
+        description: "List of attribute names put into the schema"
+        items:
+          $ref: "#/definitions/schema_post_attributes"
+    example:
+      name: "Passport"
+      version: "1.0"
+      isRevocable: false
+      parentSchemaId: ""
+      attributes:
+      - name: "givenName"
+        type: "string"
+  schema_details:
+    allOf:
+    - $ref: "#/definitions/schema_post"
+    - type: "object"
+      properties:
+        isDeprecated:
+          type: "boolean"
+        lowLevelSchema:
+          type: "object"
+          properties: {}
+        credentialDefinitionId:
+          type: "string"
+        revocationRegistryId:
+          type: "string"
+      example:
+        isDeprecated: false
+        lowLevelSchema: {}
+        credentialDefinitionId: "Th7MpTaRZVRYnPiabds81Y:3:CL:15:TAG1"
+        revocationRegistryId: ""
+  message_post:
+    type: "object"
+    required:
+    - "did"
+    - "message"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      did:
+        type: "string"
+        description: "Recipient DID"
+      message:
+        type: "string"
+        description: "authcrypted, base64-encoded message to send"
+  indy_post:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+        description: "Anoncrypted-message"
+  login_post:
+    type: "object"
+    required:
+    - "password"
+    - "username"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+  nym_post:
+    type: "object"
+    required:
+    - "did"
+    - "verkey"
+    properties:
+      wallet:
+        $ref: "#/definitions/wallet"
+      did:
+        type: "string"
+        description: "Did to write on the ledger"
+      verkey:
+        type: "string"
+        description: "Verkey of did to write on the ledger"
+      alias:
+        type: "string"
+        description: "(Optional) Alias of did to write on the ledger"
+      role:
+        type: "string"
+        description: "(Optional) role of did to write on the ledger (default = NONE)"
+        enum:
+        - "NONE"
+        - "TRUSTEE"
+        - "STEWARD"
+        - "TRUST_ANCHOR"
+  inline_response_201:
+    properties:
+      id:
+        type: "string"
+        description: "Id of the new user"
+    example:
+      id: "id"
+  inline_response_200:
+    properties:
+      myDid:
+        type: "string"
+        description: "my pairwise did for this connection"
+      theirDid:
+        type: "string"
+        description: "their pairwise did for this connection"
+      acknowledged:
+        type: "boolean"
+        description: "boolean value indicating if connection is acknowledged"
+    example:
+      theirDid: "theirDid"
+      acknowledged: true
+      myDid: "myDid"
+  inline_response_200_1:
+    properties:
+      name:
+        type: "string"
+        description: "Name of the schema"
+      version:
+        type: "string"
+        description: "Version of the schema"
+      schemaId:
+        type: "string"
+        description: "Schema Id (as defined in Indy)"
+      createdDate:
+        type: "number"
+        description: "Creation Date of the schema (EPOCH)"
+  body:
+    type: "object"
+    required:
+    - "operation"
+    properties:
+      operation:
+        type: "string"
+        enum:
+        - "revoke"
+  wallet_post_credentials:
+    required:
+    - "key"
+    properties:
+      key:
+        type: "string"
+        description: "Passphrase used to derive wallet master key"
+    description: "Wallet Credentials JSON. Supported keys vary by wallet type. A default\
+      \ config will be used if none is provided."
+  schema_post_attributes:
+    required:
+    - "name"
+    - "type"
+    properties:
+      name:
+        type: "string"
+        description: "Name of the attribute (Key)"
+      type:
+        type: "string"
+        description: "A valid type for attributes, as requested using GET /types in\
+          \ schema compiler API"
+parameters:
+  userParam:
+    name: "user"
+    in: "path"
+    description: "A unique id value (or \"me\") identifying this user."
+    required: true
+    type: "string"
+  walletParam:
+    name: "wallet"
+    in: "path"
+    description: "A unique id value (or \"default\") identifying this wallet."
+    required: true
+    type: "string"
+  walletHeader:
+    name: "wallet"
+    in: "header"
+    description: "(Optional) A unique id value (or \"default\") identifying a wallet"
+    required: false
+    type: "string"
