@@ -2,7 +2,7 @@
 FROM node:9.11.1-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install --production
 COPY . .
 RUN npm run build
 
