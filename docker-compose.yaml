@@ -4,12 +4,13 @@ services:
   nginx:
     build:
       context: .
-    image: admin-ui
-    container_name: admin-ui
+    image: idchain-admin-ui
+    container_name: idchain-admin-ui
     ports:
-      - 8080:80
+      - 8080:${NGINX_PORT-80}
     environment:
-      - NGINX_HOST
-      - NGINX_PORT
-      - API_HOST
-      - API_PORT
+      - NGINX_HOST=${NGINX_HOST-localhost}
+      - NGINX_PORT=${NGINX_PORT-80}
+      - IDC_API_DOMAIN_PROTOCOL=${IDC_API_DOMAIN_PROTOCOL-http}
+      - IDC_API_DOMAIN_HOST=${IDC_API_DOMAIN_HOST-127.0.0.1}
+      - IDC_API_DOMAIN_PORT=${IDC_API_DOMAIN_PORT-8000}
