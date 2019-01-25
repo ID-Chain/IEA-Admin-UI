@@ -4,7 +4,7 @@ services:
   nginx:
     build:
       context: .
-    image: idchain-admin-ui
+    image: idchain/admin-ui
     container_name: idchain-admin-ui
     ports:
       - 8080:${NGINX_PORT-80}
